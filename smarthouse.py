@@ -110,4 +110,6 @@ class SmartHouse:
         """Prøver å sette temperaturen i et gitt rom ved å sette alle aktuatorer
         som kan påvirke temperatur ('Paneloven', 'Varmepumpe', ...) til ønsket
         temperatur."""
+
+
         return NotImplemented
