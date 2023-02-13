@@ -1,19 +1,19 @@
 class Device:
 
-    def __init__(self,device_id,device_name,device_prod_name,device_model_name,device_location,device_type):
+    def __init__(self,device_id,device_name,device_prod_name,device_model_name,device_type):
         self.device_id = device_id
         self.device_name = device_name
         self.device_prod_name = device_prod_name
         self.device_model_name = device_model_name
-        self.device_location = device_location
         self.device_type = device_type
+
 
 
 class Sensor(Device):
 
-    def __init__(self,current_measurement):
-        self.current_measurement = current_measurement
-        self.previous_measurements = []
+    #def __init__(self,current_measurement):
+     #   self.current_measurement = current_measurement
+      #  self.previous_measurements = []
 
     def new_measurement(self,new_measurement):
         self.previous_measurements.append(self.current_measurement)

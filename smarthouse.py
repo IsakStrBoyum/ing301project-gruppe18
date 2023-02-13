@@ -10,9 +10,17 @@ class Room:
     def __init__(self, area: float, name: str = None):
         self.area = area
         self.name = name
+        self.devices_in_room = []
 
     def __repr__(self):
         return f"{self.name} ({self.area} m^2)"
+
+    def add_device(self,device: Device):
+        self.devices_in_room.append(device)
+
+    def __iter__(self):
+        return self.devices_in_room.__iter__()
+
 
 
 class Floor:
@@ -23,6 +31,13 @@ class Floor:
         self.floor_no = floor_no
         self.rooms = []
 
+    def add_room(self, room:Room):
+        self.rooms.append(room)
+
+    def __iter__(self):
+        return self.rooms.__iter__()
+
+
 
 class SmartHouse:
     """Den sentrale klasse i et smart hus system.
@@ -31,45 +46,85 @@ class SmartHouse:
 
     def __init__(self):
         self.floors = []
+        self.floor_num = 1
 
     def create_floor(self) -> Floor:
         """Legger til en etasje og gi den tilbake som objekt.
             Denne metoden ble kalt i initialiseringsfasen når
             strukturen av huset bygges opp-."""
-        return NotImplemented
+        new_floor = Floor(self.floor_num)
+        self.floors.append(new_floor)
+        self.floor_num +=1
+        return new_floor
 
     def create_room(self, floor_no: int, area: float, name: str = None) -> Room:
         """Legger til et rom i en etasje og gi den tilbake som objekt.
             Denne metoden ble kalt i initialiseringsfasen når
             strukturen av huset bygges opp-."""
-        return NotImplemented
+        new_room = Room(area,name)
+        self.floors[floor_no-1].add_room(new_room)
+        return new_room
 
     def get_no_of_rooms(self) -> int:
+        sum = 0
+        for floor_ant in self.floors:
+            for room_ant in floor_ant:
+                sum += 1
+
         """Gir tilbake antall rom i huset som heltall"""
-        return NotImplemented
+        return sum
+
+
+
+
 
     def get_all_devices(self) -> List[Device]:
         """Gir tilbake en liste med alle enheter som er registrert i huset."""
-        return NotImplemented
+
+        tot_device = []
+        for floor_ant in self.floors:
+            for room_ant in floor_ant:
+                for device_ant in room_ant:
+                    tot_device.append(device_ant)
+        return tot_device
 
     def get_all_rooms(self) -> List[Room]:
         """Gir tilbake en liste med alle rom i huset."""
-        return NotImplemented
+        all_Rooms = []
+        for floor_ant in self.floors:
+            for room_ant in floor_ant:
+                all_Rooms.append(room_ant)
+
+        return all_Rooms
 
     def get_total_area(self) -> float:
+        all_Rooms = self.get_all_rooms()
+        tot_area = 0
+        for rooms in all_Rooms:
+            tot_area += rooms.area
         """Regner ut det totale arealet av huset."""
-        return NotImplemented
+        return tot_area
 
     def register_device(self, device: Device, room: Room):
         """Registrerer en enhet i et gitt rom."""
-        return NotImplemented
+        room.add_device(device)
+        return
 
     def get_no_of_devices(self):
         """Gir tilbake antall registrerte enheter i huset."""
-        return NotImplemented
+        sum = 0
+        for floor_ant in self.floors:
+            for room_ant in floor_ant:
+                for device_ant in room_ant:
+                    sum+=1
+        return sum
 
     def get_no_of_sensors(self):
         """Git tilbake antall av registrerte sensorer i huset."""
+        all_devices = self.get_all_devices()
+        sum = 0
+        for device in all_devices:
+            if(device)
         return NotImplemented
 
     def get_no_of_actuators(self):
