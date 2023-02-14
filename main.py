@@ -4,15 +4,30 @@ from devices import *
 
 def build_demo_house() -> SmartHouse:
     house = SmartHouse()
-    house.create_floor()
-    house.create_room(1,10,'stue')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    device = Sensor(
+    house.create_floor(1)
+    house.create_floor(2)
 
-    print(house.get_all_rooms())
+    house.create_room(1,39.75,"Livingroom/Kitchen")
+    house.create_room(1, 13.5, "Entrance")
+    house.create_room(1, 6.3, "Bathroom 1")
+    house.create_room(1, 8, "Guestroom 1")
+    house.create_room(1, 19, "Garage")
+
+    house.create_room(2, 11.75, "Office")
+    house.create_room(2, 9.25, "Bathroom 2")
+    house.create_room(2, 8, "Guestroom 2")
+    house.create_room(2, 10, "Gang")
+    house.create_room(2, 10, "Guestroom 3")
+    house.create_room(2, 4, "Dressing Room")
+    house.create_room(2, 17, "Master Bedroom")
+
+    device1 = Device()
+    house.register_device()
+
+
+
+
+
     # TODO! her skal du legge inn etasjer, rom og enheter som at resultatet tilsvarer demo huset!
     return house
 
