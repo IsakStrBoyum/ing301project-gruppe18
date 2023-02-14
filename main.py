@@ -4,16 +4,25 @@ from devices import *
 
 def build_demo_house() -> SmartHouse:
     house = SmartHouse()
-    house.create_floor()
-    stue_etasje1 = house.create_room(1,10,'stue')
-    bad_etasje2 = house.create_room(1,5,'bad0')
-    house.create_room(1,5,'bad1')
-    house.create_room(1,5,'bad2')
-    house.create_room(1,5,'bad3')
-    temp = Sensor("H3su","Tempsensor", "Temp sensor rom 11", "DH11", "Temperatursensor", "373.15 F")
-    print(house.get_all_rooms())
+    house.create_floor(1)
+    house.create_floor(2)
 
-    house.register_device(temp, stue_etasje1)
+    house.create_room(1,39.75,"Livingroom/Kitchen")
+    house.create_room(1, 13.5, "Entrance")
+    house.create_room(1, 6.3, "Bathroom 1")
+    house.create_room(1, 8, "Guestroom 1")
+    house.create_room(1, 19, "Garage")
+
+    house.create_room(2, 11.75, "Office")
+    house.create_room(2, 9.25, "Bathroom 2")
+    house.create_room(2, 8, "Guestroom 2")
+    house.create_room(2, 10, "Gang")
+    house.create_room(2, 10, "Guestroom 3")
+    house.create_room(2, 4, "Dressing Room")
+    house.create_room(2, 17, "Master Bedroom")
+
+    device1 = Device()
+    house.register_device()
 
 
 

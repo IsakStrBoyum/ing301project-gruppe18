@@ -30,12 +30,14 @@ class Sensor(Device):
 
 class Actuator(Device):
     def __init__(self, device_id, device_name, device_prod_name, device_model_name, device_type, current_state):
-        super().__init__(device_id, device_name, device_prod_name, device_model_name, device_type)
         self.current_state = current_state
+        super().__init__(device_id, device_name, device_prod_name, device_model_name, device_type)
 
     def set_state(self, new_state):
         self.current_state = new_state
-        return
+
+    def get_state(self):
+        return self.current_state
 
     def __repr__(self):
         return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_state}  Product details: {self.device_type} {self.device_name}"

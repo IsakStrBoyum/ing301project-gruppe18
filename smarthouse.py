@@ -15,12 +15,11 @@ class Room:
     def __repr__(self):
         return f"{self.name} ({self.area} m^2)"
 
-    def add_device(self,device: Device):
+    def add_device(self, device: Device):
         self.devices_in_room.append(device)
 
     def __iter__(self):
         return self.devices_in_room.__iter__()
-
 
 
 class Floor:
@@ -31,12 +30,11 @@ class Floor:
         self.floor_no = floor_no
         self.rooms = []
 
-    def add_room(self, room:Room):
+    def add_room(self, room: Room):
         self.rooms.append(room)
 
     def __iter__(self):
         return self.rooms.__iter__()
-
 
 
 class SmartHouse:
@@ -54,15 +52,15 @@ class SmartHouse:
             strukturen av huset bygges opp-."""
         new_floor = Floor(self.floor_num)
         self.floors.append(new_floor)
-        self.floor_num +=1
+        self.floor_num += 1
         return new_floor
 
     def create_room(self, floor_no: int, area: float, name: str = None) -> Room:
         """Legger til et rom i en etasje og gi den tilbake som objekt.
             Denne metoden ble kalt i initialiseringsfasen når
             strukturen av huset bygges opp-."""
-        new_room = Room(area,name)
-        self.floors[floor_no-1].add_room(new_room)
+        new_room = Room(area, name)
+        self.floors[floor_no - 1].add_room(new_room)
         return new_room
 
     def get_no_of_rooms(self) -> int:
@@ -112,7 +110,7 @@ class SmartHouse:
         for floor_ant in self.floors:
             for room_ant in floor_ant:
                 for device_ant in room_ant:
-                    sum+=1
+                    sum += 1
         return sum
 
     def get_no_of_sensors(self):
@@ -121,7 +119,7 @@ class SmartHouse:
         sum = 0
         for device in all_devices:
             if isinstance(device, Sensor):
-                sum+= 1
+                sum += 1
 
         return sum
 
@@ -138,7 +136,8 @@ class SmartHouse:
         """Flytter en enhet fra et gitt romm til et annet."""
         for device_in_list in from_room.devices_in_room:
             if device_in_list == device:
-                to_room.devices_in_room.append(from_room.devices_in_room.pop(from_room.devices_in_room.index(device_in_list)))
+                to_room.devices_in_room.append(
+                    from_room.devices_in_room.pop(from_room.devices_in_room.index(device_in_list)))
         return
 
     def find_device_by_serial_no(self, serial_no: str) -> Optional[Device]:
@@ -160,32 +159,27 @@ class SmartHouse:
                 if device_in_room == device:
                     found_room = room
         return found_room
+
     def get_all_devices_in_room(self, room: Room) -> List[Device]:
         """Gir tilbake en liste med alle enheter som er registrert på rommet."""
 
-        return room.devices_in_room()
+        return room.devices_in_room
 
     def turn_on_lights_in_room(self, room: Room):
         """Slår på alle enheter av type 'Smart Lys' i et gitt rom."""
         all_devices_list = self.get_all_devices_in_room(room)
         for device in all_devices_list:
-            if device.device_type == "Smart Lys":
-                a = device
-                a.__class__ = Actuator
-                a.set_state("ON")
-
+            if device.device_type == "Smart Lys" and isinstance(device, Actuator):
+                device.set_state("ON")
         return
 
     def turn_off_lights_in_room(self, room: Room):
         """Slår av alle enheter av type 'Smart Lys' i et gitt rom."""
         all_devices_list = self.get_all_devices_in_room(room)
         for device in all_devices_list:
-            if device.device_type == "Smart Lys":
-                a = device
-                a.__class__ = Actuator
-                a.set_state("OFF")
+            if device.device_type == "Smart Lys" and isinstance(device, Actuator):
+                device.set_state("OFF")
         return
-
 
     def get_temperature_in_room(self, room: Room) -> Optional[float]:
         """Prøver å finne ut temperaturen i et gitt rom ved å finne
@@ -193,10 +187,8 @@ class SmartHouse:
         all_devices_list = self.get_all_devices_in_room(room)
         temp = None
         for device in all_devices_list:
-            if device.device_type == "Temperatursensor":
-                a = device
-                a.__class__ = Sensor
-                a.
+            if device.device_type == "Temperatursensor" and isinstance(device, Sensor):
+                temp = float(device.get_current_measurement())
         return
 
     def set_temperature_in_room(self, room: Room, temperature: float):
@@ -204,5 +196,11 @@ class SmartHouse:
         som kan påvirke temperatur ('Paneloven', 'Varmepumpe', ...) til ønsket
         temperatur."""
 
-
-        return NotImplemented
+        all_devices_list = self.get_all_devices_in_room(room)
+        for device in all_devices_list:
+            if device.device_type == "Paneloven" \
+                    or device.device_type == "Varmepumpe" \
+                    or device.device_type == "Gulvvarmepanel" \
+                    and isinstance(device, Actuator):
+                device.set_state(temperature)
+        return
