@@ -1,4 +1,4 @@
-from devices import Device
+from devices import *
 from typing import List, Optional
 
 
@@ -124,16 +124,26 @@ class SmartHouse:
         all_devices = self.get_all_devices()
         sum = 0
         for device in all_devices:
-            if(device)
-        return NotImplemented
+            if isinstance(device, Sensor):
+                sum+= 1
+
+        return sum
 
     def get_no_of_actuators(self):
         """Git tilbake antall av registrerte aktuatorer i huset."""
-        return NotImplemented
+        all_devices = self.get_all_devices()
+        sum = 0
+        for device in all_devices:
+            if isinstance(device, Actuator):
+                sum += 1
+        return sum
 
     def move_device(self, device: Device, from_room: Room, to_room: Room):
         """Flytter en enhet fra et gitt romm til et annet."""
-        return NotImplemented
+        for device_in_list in from_room.devices_in_room:
+            if device_in_list == device:
+                to_room.devices_in_room.append(from_room.devices_in_room.pop(device_in_list))
+        return
 
     def find_device_by_serial_no(self, serial_no: str) -> Optional[Device]:
         """Prøver å finne en enhet blant de registrerte enhetene ved å
