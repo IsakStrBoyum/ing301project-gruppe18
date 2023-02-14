@@ -121,10 +121,7 @@ class SmartHouse:
 
     def get_no_of_sensors(self):
         """Git tilbake antall av registrerte sensorer i huset."""
-        all_devices = self.get_all_devices()
-        sum = 0
-        for device in all_devices:
-            if(device)
+
         return NotImplemented
 
     def get_no_of_actuators(self):
