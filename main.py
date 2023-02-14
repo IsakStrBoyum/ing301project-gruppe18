@@ -5,14 +5,20 @@ from devices import *
 def build_demo_house() -> SmartHouse:
     house = SmartHouse()
     house.create_floor()
-    house.create_room(1,10,'stue')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    house.create_room(1,5,'bad')
-    device = Sensor(
-
+    stue_etasje1 = house.create_room(1,10,'stue')
+    bad_etasje2 = house.create_room(1,5,'bad0')
+    house.create_room(1,5,'bad1')
+    house.create_room(1,5,'bad2')
+    house.create_room(1,5,'bad3')
+    temp = Sensor("H3su","Tempsensor", "Temp sensor rom 11", "DH11", "Temperatursensor", "373.15 F")
     print(house.get_all_rooms())
+
+    house.register_device(temp, stue_etasje1)
+
+
+
+
+
     # TODO! her skal du legge inn etasjer, rom og enheter som at resultatet tilsvarer demo huset!
     return house
 

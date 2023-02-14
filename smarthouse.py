@@ -74,10 +74,6 @@ class SmartHouse:
         """Gir tilbake antall rom i huset som heltall"""
         return sum
 
-
-
-
-
     def get_all_devices(self) -> List[Device]:
         """Gir tilbake en liste med alle enheter som er registrert i huset."""
 
@@ -142,34 +138,66 @@ class SmartHouse:
         """Flytter en enhet fra et gitt romm til et annet."""
         for device_in_list in from_room.devices_in_room:
             if device_in_list == device:
-                to_room.devices_in_room.append(from_room.devices_in_room.pop(device_in_list))
+                to_room.devices_in_room.append(from_room.devices_in_room.pop(from_room.devices_in_room.index(device_in_list)))
         return
 
     def find_device_by_serial_no(self, serial_no: str) -> Optional[Device]:
         """Prøver å finne en enhet blant de registrerte enhetene ved å
         søke opp dens serienummer."""
-        return NotImplemented
+        list_of_devices = self.get_all_devices()
+        found_device = None
+        for device in list_of_devices:
+            if device.device_id == serial_no:
+                found_device = device
+        return found_device
 
     def get_room_with_device(self, device: Device):
-        """Gir tilbake rommet der en gitt enhet er resitrert."""
-        return NotImplemented
-
+        """Gir tilbake rommet der en gitt enhet er registrert."""
+        list_of_rooms = self.get_all_rooms()
+        found_room = None
+        for room in list_of_rooms:
+            for device_in_room in room.devices_in_room:
+                if device_in_room == device:
+                    found_room = room
+        return found_room
     def get_all_devices_in_room(self, room: Room) -> List[Device]:
         """Gir tilbake en liste med alle enheter som er registrert på rommet."""
-        return NotImplemented
+
+        return room.devices_in_room()
 
     def turn_on_lights_in_room(self, room: Room):
         """Slår på alle enheter av type 'Smart Lys' i et gitt rom."""
-        return NotImplemented
+        all_devices_list = self.get_all_devices_in_room(room)
+        for device in all_devices_list:
+            if device.device_type == "Smart Lys":
+                a = device
+                a.__class__ = Actuator
+                a.set_state("ON")
+
+        return
 
     def turn_off_lights_in_room(self, room: Room):
         """Slår av alle enheter av type 'Smart Lys' i et gitt rom."""
-        return NotImplemented
+        all_devices_list = self.get_all_devices_in_room(room)
+        for device in all_devices_list:
+            if device.device_type == "Smart Lys":
+                a = device
+                a.__class__ = Actuator
+                a.set_state("OFF")
+        return
+
 
     def get_temperature_in_room(self, room: Room) -> Optional[float]:
         """Prøver å finne ut temperaturen i et gitt rom ved å finne
         enheter av type 'Temperatursensor' der og gi tilake verdien som kommatall."""
-        return NotImplemented
+        all_devices_list = self.get_all_devices_in_room(room)
+        temp = None
+        for device in all_devices_list:
+            if device.device_type == "Temperatursensor":
+                a = device
+                a.__class__ = Sensor
+                a.
+        return
 
     def set_temperature_in_room(self, room: Room, temperature: float):
         """Prøver å sette temperaturen i et gitt rom ved å sette alle aktuatorer
