@@ -20,8 +20,14 @@ class Sensor(Device):
         self.previous_measurements.append(new_measurement)
         self.current_measurement = new_measurement
 
+    def get_current_measurement(self):
+        return self.current_measurement
+
+    def get_all_measurements(self):
+        return self.previous_measurements
+
     def __repr__(self):
-        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_measurement} °C Product details: { self.device_type} {self.device_name} "
+        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_measurement}  Product details: { self.device_type} {self.device_name} "
 
 
 class Actuator(Device):
@@ -34,6 +40,6 @@ class Actuator(Device):
         self.current_state = new_state
 
     def __repr__(self):
-        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_state} °C Product details: {self.device_type} {self.device_name} "
+        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_state}  Product details: {self.device_type} {self.device_name} "
 
 
