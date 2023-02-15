@@ -25,7 +25,7 @@ class Sensor(Device):
         return self.previous_measurements
 
     def __repr__(self):
-        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_measurement}  Product details: {self.device_type} {self.device_name} "
+        return f"Sensor({self.device_id}) TYPE: {self.device_type} STATUS: {self.current_measurement} PRODUCT DETAILS: {self.device_prod_name} {self.device_model_name}"
 
 
 class Actuator(Device):
@@ -39,5 +39,8 @@ class Actuator(Device):
     def get_state(self):
         return self.current_state
 
+
     def __repr__(self):
-        return f"Sensor {self.device_id} Type: {self.device_type} Status: {self.current_state}  Product details: {self.device_type} {self.device_name}"
+        return f"Aktuator({self.device_id}) TYPE: {self.device_type} STATUS: {self.current_state} PRODUCT DETAILS: {self.device_prod_name} {self.device_model_name}"
+
+        #NICKNAME: {self.device_name}

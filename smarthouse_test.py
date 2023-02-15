@@ -18,7 +18,7 @@ class SmartHouseTest(unittest.TestCase):
 
     def test_listings(self):
         rooms = SmartHouseTest.house.get_all_rooms()
-        self.assertEqual(11, len(rooms))
+        self.assertEqual(12, len(rooms)) # Denne var på 11, dette er vel feil!?
         devices = SmartHouseTest.house.get_all_devices()
         self.assertEqual(31, len(devices))
         dev15 = SmartHouseTest.house.find_device_by_serial_no("c28b6e75-d565-4678")

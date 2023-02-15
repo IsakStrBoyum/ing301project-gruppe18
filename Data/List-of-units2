@@ -1,0 +1,31 @@
+1	Smart Lys	Fritsch Group	Tresom Bright 1.0	f11bb4fc-ba74-49cd	Light id1 LR	0
+2	Smart Lys	Fritsch Group	Alphazap 2	480dbae8-cce7-46d7	Light id2 LR	0
+3	Fuktighetssensor	Bernhard-Roberts	Andalax	4cb686fe-6448-4cf6	MoistSen id3 BR1	2
+4	Smart Lys	Fritsch Group	Alphazap 2	6a36c71d-4f48-4eb4	Light id4 BR1	2
+5	Smart Lys	Larkin-Nitzsche	Quo Lux	d01130c9-a368-42c6	Light id5 GA	4
+6	Billader	Jast, Hansen and Halvorson	Charge It 9000	0cae4f01-4ad9-47aa	Car Charger id6 GA	4
+7	Paneloven	Hauck-DuBuque	Voyatouch 42	d16d84de-79f1-4f9a	Panel Oven id7 GR1	3
+8	Temperatursensor	Moen Inc	Prodder Ute 1.2	e237beec-2675-4cb0	Tempsens id8 OS	1
+9	Smart Lys	Fritsch Group	Alphazap 2	f4db4e54-cebe-428d	Light id9 EC	1
+10	Smart Lys	Larkin-Nitzsche	Quo Vadis Lux	8d09aa92-fc58-4c6	Light id10 OS	1
+11	Strømmåler	Kilback LLC	Transcof Current	c8bb5601-e850-4a80	Powermeter id11 KI	0
+12	Temperatursensor	Moen Inc	Prodder Inne 2.3	d16d84de-79f1-4f9a	Temp Sense id12 KI	0
+13	Smart Lys	Fritsch Group	Alphazap 2	390ae474-21fb-4e06	Light id13 EC	1
+14	Strømmåler	Ward-Schaefer	Zaam-Dox NetConnect	3b06cf0f-8494-458b	Powermeter id14 EC	1
+15	Smart Stikkontakt	Kilback LLC	Konklab 3	c28b6e75-d565-4678	Smart Plug id15 KI	0
+16	Varmepumpe	Osinski Inc	Fintone XCX4AB	4eca6387-0767-4e4e	Heater id16 LR	0
+17	Luftkvalitetssensor	Hauck-DuBuque	Sonair Pro	c76688cc-3692-4aa3	Moist Sense id17 LR	0
+18	Smart Stikkontakt	Kilback LLC	Konklab 3	4b9050f3-0ef0-4914	Smart Plug id18 LR	0
+19	Paneloven	Hauck-DuBuque	Voyatouch 42	66373954-2ddd-4807	Panel Oven id19 OF	5
+20	Smart Stikkontakt	Kilback LLC	Konklab 3	1b34f6ce-94cb-4f7b	Smart Plug id20 OF	5
+21	Fuktighetssensor	Bernhard-Roberts	Namfix Y	8ceb53b2-e88f-4e8c	Moist Sense id21 BR2	6
+22	Luftavfukter	Steuber-Gerlach	Aerified 42	ae902f8f-10b4-4738	AirMoistner id22 BR2	6
+23	Gulvvarmepanel	Steuber-Gerlach	Temp Opp Pro 13	42f204bf-9944-47a1	Floor Heater id23 BR2	6
+24	Paneloven	Hauck-DuBuque	Otcom 2	73902f8f-10b4-4738	Panel Oven id 24 GR2	7
+25	Smart Lys	Fritsch Group	Alphazap 2	627ff5f3-f4f5-47bd	Light id25 MB	11
+26	Smart Lys	Fritsch Group	Alphazap 2	ebaaadce-2d6b-4623	Light id26 MB	11
+27	Varmepumpe	Osinski Inc	Fintone XCX2FF	eed2cba8-eb13-4023	Heater id27 MB	11
+28	Temperatursensor	Moen Inc	Prodder Inne 2.3	481e94bd-ff50-40ea	Temp Sense id28 MB	11
+29	Smart Lys	Fritsch Group	Tresom Bright 1.0	233064d7-028a-407f	Light id29 MB	11
+30	Smart Lys	Fritsch Group	Alphazap 2	89393440-43cb-4cb5	Light id30 DR	10
+31	Paneloven	Hauck-DuBuque	Otcom 2	be490f21-b9cf-4413	Panel Oven id31 GR3	9
