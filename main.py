@@ -23,7 +23,7 @@ def build_demo_house() -> SmartHouse:
     house.create_room(2, 17, "Master Bedroom")
 
     list_of_units = []
-    list_of_measurement = []
+
     counter = 0
     f = codecs.open('Data/List-of-units2', 'r', 'UTF-8')
     for line in f:
@@ -33,7 +33,8 @@ def build_demo_house() -> SmartHouse:
     for unit in list_of_units:
         list_of_units[counter] = unit.split('\t')
         counter += 1
-
+        
+    list_of_measurement = []
     counter = 0
     f = codecs.open('Data/Sensor-data', 'r', 'UTF-8')
     for line in f:
