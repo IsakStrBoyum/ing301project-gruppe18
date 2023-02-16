@@ -1,13 +1,14 @@
 from smarthouse import SmartHouse
 from devices import *
+import codecs
 
 
 def build_demo_house() -> SmartHouse:
     house = SmartHouse()
-    house.create_floor(1)
-    house.create_floor(2)
+    house.create_floor()
+    house.create_floor()
 
-    house.create_room(1,39.75,"Livingroom/Kitchen")
+    house.create_room(1, 39.75, "Livingroom/Kitchen")
     house.create_room(1, 13.5, "Entrance")
     house.create_room(1, 6.3, "Bathroom 1")
     house.create_room(1, 8, "Guestroom 1")
@@ -21,11 +22,47 @@ def build_demo_house() -> SmartHouse:
     house.create_room(2, 4, "Dressing Room")
     house.create_room(2, 17, "Master Bedroom")
 
-    device1 = Device()
-    house.register_device()
+    list_of_units = []
 
+    counter = 0
+    f = codecs.open('Data/List-of-units2', 'r', 'UTF-8')
+    for line in f:
+        list_of_units.append(line)
+    f.close()
 
+    for unit in list_of_units:
+        list_of_units[counter] = unit.split('\t')
+        counter += 1
+        
+    list_of_measurement = []
+    counter = 0
+    f = codecs.open('Data/Sensor-data', 'r', 'UTF-8')
+    for line in f:
+        list_of_measurement.append(line)
+    f.close()
 
+    for meas in list_of_measurement:
+        list_of_measurement[counter] = meas.split('\t')
+        counter += 1
+
+    #print(list_of_units)
+    #print(list_of_measurement)
+    for unit_info in list_of_units:
+        if int(unit_info[0]) in (1, 2, 4, 5, 6, 7, 9, 10, 13, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 27, 29, 30, 31):
+            if int(unit_info[0]) == 13:
+                house.register_device(
+                    Actuator(unit_info[4], unit_info[5], unit_info[2], unit_info[3], unit_info[1], "ON")
+                    , house.get_all_rooms()[int(unit_info[6].strip())])
+            else:
+                house.register_device(
+                    Actuator(unit_info[4], unit_info[5], unit_info[2], unit_info[3], unit_info[1], "OFF")
+                    , house.get_all_rooms()[int(unit_info[6].strip())])
+        else:
+            for meas_info in list_of_measurement:
+                if int(meas_info[0]) == int(unit_info[0]):
+                    house.register_device(
+                        Sensor(unit_info[4], unit_info[5], unit_info[2], unit_info[3], unit_info[1], meas_info[1].strip())
+                        , house.get_all_rooms()[int(unit_info[6].strip())])
 
 
     # TODO! her skal du legge inn etasjer, rom og enheter som at resultatet tilsvarer demo huset!
@@ -93,7 +130,8 @@ def main(smart_house: SmartHouse):
     print("************ Smart House Control *****************")
     print(f"No of Rooms:       {smart_house.get_no_of_rooms()}")
     print(f"Total Area:        {smart_house.get_total_area()}")
-    print(f"Connected Devices: {smart_house.get_no_of_devices()} ({smart_house.get_no_of_sensors()} Sensors | {smart_house.get_no_of_actuators()} Actuators)")
+    print(
+        f"Connected Devices: {smart_house.get_no_of_devices()} ({smart_house.get_no_of_sensors()} Sensors | {smart_house.get_no_of_actuators()} Actuators)")
     print("**************************************************")
     print()
     print("Management Interface v.0.1")

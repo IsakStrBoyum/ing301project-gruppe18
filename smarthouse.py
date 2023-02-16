@@ -188,8 +188,9 @@ class SmartHouse:
         temp = None
         for device in all_devices_list:
             if device.device_type == "Temperatursensor" and isinstance(device, Sensor):
-                temp = float(device.get_current_measurement())
-        return
+                temp = str(device.get_current_measurement()).strip('°C')
+
+        return float(temp)
 
     def set_temperature_in_room(self, room: Room, temperature: float):
         """Prøver å sette temperaturen i et gitt rom ved å sette alle aktuatorer
@@ -202,5 +203,5 @@ class SmartHouse:
                     or device.device_type == "Varmepumpe" \
                     or device.device_type == "Gulvvarmepanel" \
                     and isinstance(device, Actuator):
-                device.set_state(temperature)
+                device.set_state(f"{temperature} °C")
         return
