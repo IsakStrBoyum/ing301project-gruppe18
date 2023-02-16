@@ -13,6 +13,7 @@ class Sensor(Device):
         super().__init__(device_id, device_name, device_prod_name, device_model_name, device_type)
         self.previous_measurements = []
         self.current_measurement = current_measurement
+        self.previous_measurements.append(current_measurement) #adds first measurement to list
 
     def new_measurement(self, new_measurement):
         self.previous_measurements.append(new_measurement)
