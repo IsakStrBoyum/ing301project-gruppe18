@@ -1,6 +1,13 @@
 from smarthouse import SmartHouse
 from devices import *
 import codecs
+from persistence import SmartHousePersistence
+
+
+def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
+    result = SmartHouse()
+    # TODO read rooms, devices and their locations from the database
+    return result
 
 
 def build_demo_house() -> SmartHouse:
