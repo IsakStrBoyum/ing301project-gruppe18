@@ -6,7 +6,25 @@ from persistence import SmartHousePersistence
 
 def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
     result = SmartHouse()
-    # TODO read rooms, devices and their locations from the database
+    result.create_floor()
+    result.create_floor()
+
+    persistence.cursor.execute("SELECT * FROM rooms;")
+    all_rooms = persistence.cursor.fetchall()
+    persistence.cursor.execute("SELECT * FROM devices")
+    all_devices = persistence.cursor.fetchall()
+    room_counter = 0
+    for room in all_rooms:
+        new_room =result.create_room(int(room[1]),float(room[2]),room[3])
+        room_counter = room_counter+1
+        for device in all_devices:
+            if room_counter == int(device[1]):
+                new_device = Device(device[5],device[2],device[3],device[4],device[2]) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
+                new_device.device_number = int(device[0])
+                new_room.add_device(new_device)
+
+
+    # read rooms, devices and their locations from the database
     return result
 
 
@@ -163,6 +181,8 @@ def main(smart_house: SmartHouse):
             break
         else:
             print(f"Error! Could not interpret input '{char}'!")
+
+
 
 
 if __name__ == '__main__':

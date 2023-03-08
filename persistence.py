@@ -1,5 +1,6 @@
+import sqlite3
 from sqlite3 import Connection
-from devices import Device
+from devices import *
 from smarthouse import Room
 from typing import Optional, List, Dict, Tuple
 from datetime import date, datetime
@@ -44,13 +45,39 @@ class SmartHouseAnalytics:
         Function may return None if the given device is an actuator or
         if there are no sensor values for the given device recorded in the database.
         """
-        return NotImplemented()
+        try:
+            sensor_id = sensor.device_number
+            self.persistence.cursor.execute(
+                "SELECT device FROM measurements WHERE device = ? GROUP BY device;", (str(sensor_id),))
+            check = self.persistence.cursor.fetchall()
+            if int((check[0])[0]) == sensor_id:
+                self.persistence.cursor.execute(
+                    "SELECT value FROM measurements WHERE device = ? ORDER BY time_stamp DESC LIMIT 1;",(str(sensor_id),))
+                result = float(((self.persistence.cursor.fetchall())[0])[0]) # (()[0])[0] gir tallet ut fetchall[0] gir (x, ),der x er et tall
+                # ORDER BY time_stamp DESC LIMIT 1 will take the last timestamp from all values where device = id
+        except:
+            result = None
+
+        return result
 
     def get_coldest_room(self) -> Room:
         """
         Finds the room, which has the lowest temperature on average.
         """
-        return NotImplemented()
+        self.persistence.cursor.execute("SELECT device, AVG(value) AS avg_val FROM measurements GROUP BY device ORDER BY avg_val ASC LIMIT 1;")
+        coldest_room = self.persistence.cursor.fetchall()
+        lowest_device_id = (coldest_room[0])[0]
+
+        self.persistence.cursor.execute("SELECT room FROM devices WHERE id = ?;",str(lowest_device_id))
+        lowest_room_id = (self.persistence.cursor.fetchall()[0])[0]
+
+        self.persistence.cursor.execute("SELECT area,name FROM rooms WHERE id = ? ",str(lowest_room_id))
+        room_vals = self.persistence.cursor.fetchall();
+
+        room = Room(float((room_vals[0])[0]),(room_vals[0])[1])
+        #Assuming devices.device_id = measurements.device
+
+        return room
 
     def get_sensor_readings_in_timespan(self, sensor: Device, from_ts: datetime, to_ts: datetime) -> List[float]:
         """
