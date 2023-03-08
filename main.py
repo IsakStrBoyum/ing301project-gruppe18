@@ -67,7 +67,9 @@ def build_demo_house() -> SmartHouse:
 
     # TODO! her skal du legge inn etasjer, rom og enheter som at resultatet tilsvarer demo huset!
     return house
+def load_demo_house() -> SmartHouse:
 
+    return NotImplemented()
 
 def do_device_list(smart_house: SmartHouse):
     print("Listing Devices...")

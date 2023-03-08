@@ -1,5 +1,5 @@
 from sqlite3 import Connection
-from devices import Device
+from devices import *
 from smarthouse import Room
 from typing import Optional, List, Dict, Tuple
 from datetime import date, datetime
@@ -44,12 +44,43 @@ class SmartHouseAnalytics:
         Function may return None if the given device is an actuator or
         if there are no sensor values for the given device recorded in the database.
         """
-        return NotImplemented()
+        result = None
+        if isinstance(sensor, Sensor):
+            sid = sensor.device_id
+            self.persistence.cursor.execute(f"SELECT value "
+                                            f"FROM measurements "
+                                            f"WHERE "
+                                            f"time_stamp = (SELECT MAX(time_stamp) FROM measurements WHERE device = {sid}) "
+                                            f"AND device = {sid} LIMIT 1;")
+            """ 
+            Limit ensures that we only get one returned value. Since we are only assigning one measured value,
+            and we assume that one sensor cant have two measurements at the same time it is not necessary, but 
+            nice to have.
+            """
+            result = self.persistence.cursor.fetchone()[0]
+            return result
+        else:
+            return None
+
 
     def get_coldest_room(self) -> Room:
         """
         Finds the room, which has the lowest temperature on average.
+
+        Tested, and works!?:
+        
+        SELECT rooms.id, rooms.floor, rooms.area, rooms.name
+        FROM (SELECT devices.room as superroom , device, min(avgTemp) FROM
+        (SELECT measurements.device, AVG(measurements.value) as avgTemp
+        FROM devices, measurements
+        WHERE devices.id = measurements.device and devices.type = 'Temperatursensor'
+        group by device), devices
+        WHERE devices.id = device), rooms
+        WHERE rooms.id = superroom
+
         """
+
+
         return NotImplemented()
 
     def get_sensor_readings_in_timespan(self, sensor: Device, from_ts: datetime, to_ts: datetime) -> List[float]:
