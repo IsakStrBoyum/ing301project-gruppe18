@@ -6,6 +6,7 @@ class Device:
         self.device_prod_name = device_prod_name
         self.device_model_name = device_model_name
         self.device_type = device_type
+        self.device_number = None
 
 
 class Sensor(Device):

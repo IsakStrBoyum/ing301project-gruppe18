@@ -13,7 +13,7 @@ class Room:
         self.devices_in_room = []
 
     def __repr__(self):
-        return f"{self.name} ({self.area} m^2)"
+        return str(self.name)
 
     def add_device(self, device: Device):
         self.devices_in_room.append(device)
