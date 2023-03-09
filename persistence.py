@@ -3,7 +3,7 @@ from sqlite3 import Connection
 from devices import *
 from smarthouse import Room
 from typing import Optional, List, Dict, Tuple
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 class SmartHousePersistence:
@@ -83,7 +83,15 @@ class SmartHouseAnalytics:
         """
         Returns a list of sensor measurements (float values) for the given device in the given timespan.
         """
-        return NotImplemented()
+        device_id = sensor.device_number
+        self.persistence.cursor.execute("SELECT value FROM measurements WHERE (time_stamp >= ? AND time_stamp <= ?) AND device = ?",(from_ts.isoformat(), to_ts.isoformat(), str(device_id)))
+        output_db = self.persistence.cursor.fetchall()
+
+        list_val = []
+        for val in output_db:
+            list_val.append(val[0])
+
+        return list_val
 
     def describe_temperature_in_rooms(self) -> Dict[str, Tuple[float, float, float]]:
         """
@@ -97,13 +105,46 @@ class SmartHouseAnalytics:
         function that exists in Pandas:
         https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html?highlight=describe
         """
-        return NotImplemented()
+        # Dict(Romnavn, (min_temp,max_temp,avg_temp) for alle rom
+
+
+        return NotImplemented
 
     def get_hours_when_humidity_above_average(self, room: Room, day: date) -> List[int]:
+        #room_name = room.name
+        print(room)
+        self.persistence.cursor.execute("SELECT measurements.time_stamp, measurements.value FROM measurements, devices, rooms WHERE measurements.device = devices.id AND devices.type = 'Fuktighetssensor' AND rooms.id = devices.room AND rooms.name = ? AND measurements.time_stamp >= date(?) AND measurements.time_stamp <  date(?, '+1 day')",(room,day,day))
+        output_db = [(item[0], item[1]) for item in self.persistence.cursor.fetchall()]
+        avg_allday = 0
+        for val in output_db:
+            avg_allday += val[1]
+
+        avg_allday = avg_allday/len(output_db)
+        print(avg_allday)
+
+        counter = 1
+        val_counter = 0
+        start_time = datetime.fromisoformat(str(output_db[0][0]))
+        print(start_time.strftime("%H"))
+        print(timedelta(hours=1))
+        hour_list = []
+        for val in output_db:
+            if int(datetime.fromisoformat(str(val[0])).strftime("%H")) < int(start_time.strftime("%H")) + counter:
+                if val[1] > avg_allday:
+                    val_counter +=1
+                    if val_counter == 3:
+                        hour_list.append(counter)
+            else:
+                val_counter = 0
+                counter +=1
+
+
         """
         This function determines during which hours of the given day
         there were more than three measurements in that hour having a humidity measurement that is above
         the average recorded humidity in that room at that particular time.
+        
         The result is a (possibly empty) list of number respresenting hours [0-23].
         """
-        return NotImplemented()
+        print(hour_list)
+        return hour_list
