@@ -19,7 +19,12 @@ def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
         room_counter = room_counter+1
         for device in all_devices:
             if room_counter == int(device[1]):
-                new_device = Device(device[5],device[2],device[3],device[4],device[2]) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
+                if device[2] == 'Fuktighetssensor' or device[2] == 'Temperatursensor' or device[2] == 'Strømmåler' or device[2] == 'Luftkvalitetssensor':
+                    new_device = Sensor(device[5], device[2], device[3], device[4], device[2], None)
+                else:
+                    new_device = Actuator(device[5], device[2], device[3], device[4], device[2], 'OFF')
+
+                #new_device = Device(device[5],device[2],device[3],device[4],device[2]) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
                 new_device.device_number = int(device[0])
                 new_room.add_device(new_device)
 
@@ -92,9 +97,7 @@ def build_demo_house() -> SmartHouse:
 
     # TODO! her skal du legge inn etasjer, rom og enheter som at resultatet tilsvarer demo huset!
     return house
-def load_demo_house() -> SmartHouse:
 
-    return NotImplemented()
 
 def do_device_list(smart_house: SmartHouse):
     print("Listing Devices...")

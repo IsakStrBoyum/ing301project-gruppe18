@@ -45,26 +45,26 @@ class SmartHouseAnalytics:
         Function may return None if the given device is an actuator or
         if there are no sensor values for the given device recorded in the database.
         """
-<<<<<<< HEAD
         result = None
         if isinstance(sensor, Sensor):
-            sid = sensor.device_id
-            self.persistence.cursor.execute(f"SELECT value "
-                                            f"FROM measurements "
-                                            f"WHERE "
-                                            f"time_stamp = (SELECT MAX(time_stamp) FROM measurements WHERE device = {sid}) "
-                                            f"AND device = {sid} LIMIT 1;")
-            """ 
+            sid = sensor.device_number
+            self.persistence.cursor.execute("SELECT value "
+                                            "FROM measurements "
+                                            "WHERE "
+                                            "time_stamp = (SELECT MAX(time_stamp) FROM measurements WHERE device = ?) "
+                                            "AND device = ? LIMIT 1;",(sid, sid))
+            """
             Limit ensures that we only get one returned value. Since we are only assigning one measured value,
             and we assume that one sensor cant have two measurements at the same time it is not necessary, but 
             nice to have.
             """
             result = self.persistence.cursor.fetchone()[0]
+            #print(result)
             return result
         else:
             return None
 
-=======
+        """
         try:
             sensor_id = sensor.device_number
             self.persistence.cursor.execute(
@@ -79,50 +79,56 @@ class SmartHouseAnalytics:
             result = None
 
         return result
->>>>>>> bb07c28cd1e8d1ab5151df4fc5c4d046412f5400
+        """
 
     def get_coldest_room(self) -> Room:
         """
         Finds the room, which has the lowest temperature on average.
 
+        Kva om eit rom har fleire temp sensorar!?
         Tested, and works!?:
-        
-        SELECT rooms.id, rooms.floor, rooms.area, rooms.name
-        FROM (SELECT devices.room as superroom , device, min(avgTemp) FROM
-        (SELECT measurements.device, AVG(measurements.value) as avgTemp
-        FROM devices, measurements
-        WHERE devices.id = measurements.device and devices.type = 'Temperatursensor'
-        group by device), devices
-        WHERE devices.id = device), rooms
-        WHERE rooms.id = superroom
+        """
+        self.persistence.cursor.execute("SELECT rooms.id, rooms.floor, rooms.area, rooms.name "
+                                        "FROM (SELECT devices.room as superroom , device, min(avgTemp) "
+                                        "FROM (SELECT measurements.device, AVG(measurements.value) as avgTemp "
+                                        "FROM devices, measurements "
+                                        "WHERE devices.id = measurements.device and devices.type = 'Temperatursensor' "
+                                        "group by device), devices WHERE devices.id = device), rooms "
+                                        "WHERE rooms.id = superroom")
+        room_vals = self.persistence.cursor.fetchall()
+        #print(room_vals)
+        room = Room(float((room_vals[0])[2]), str((room_vals[0])[3]))
 
         """
-<<<<<<< HEAD
-
-
-        return NotImplemented()
-=======
-        self.persistence.cursor.execute("SELECT device, AVG(value) AS avg_val FROM measurements GROUP BY device ORDER BY avg_val ASC LIMIT 1;")
+        self.persistence.cursor.execute(
+            "SELECT device, AVG(value) AS avg_val FROM measurements GROUP BY device ORDER BY avg_val ASC LIMIT 1;")
         coldest_room = self.persistence.cursor.fetchall()
         lowest_device_id = (coldest_room[0])[0]
 
-        self.persistence.cursor.execute("SELECT room FROM devices WHERE id = ?;",str(lowest_device_id))
+        self.persistence.cursor.execute("SELECT room FROM devices WHERE id = ?;", str(lowest_device_id))
         lowest_room_id = (self.persistence.cursor.fetchall()[0])[0]
 
-        self.persistence.cursor.execute("SELECT area,name FROM rooms WHERE id = ? ",str(lowest_room_id))
+        self.persistence.cursor.execute("SELECT area,name FROM rooms WHERE id = ? ", str(lowest_room_id))
         room_vals = self.persistence.cursor.fetchall();
 
-        room = Room(float((room_vals[0])[0]),(room_vals[0])[1])
-        #Assuming devices.device_id = measurements.device
+        room = Room(float((room_vals[0])[0]), (room_vals[0])[1])
+        # Assuming devices.device_id = measurements.device
+        """
 
-        return room
->>>>>>> bb07c28cd1e8d1ab5151df4fc5c4d046412f5400
+        #får feil når eg returnerar via repr?! men ikkje med .name. why?????!!!!
+        return room.name
 
     def get_sensor_readings_in_timespan(self, sensor: Device, from_ts: datetime, to_ts: datetime) -> List[float]:
         """
         Returns a list of sensor measurements (float values) for the given device in the given timespan.
         """
-        return NotImplemented()
+        self.persistence.cursor.execute("SELECT value FROM measurements "
+                                        "WHERE device = ? "
+                                        "AND DATETIME(time_stamp) >= DATETIME(?) "
+                                        "AND DATETIME(time_stamp) <= DATETIME(?)", (sensor.device_number, from_ts, to_ts))
+        readings = [item[0] for item in self.persistence.cursor.fetchall()]
+        #print(readings)
+        return readings
 
     def describe_temperature_in_rooms(self) -> Dict[str, Tuple[float, float, float]]:
         """
@@ -135,8 +141,24 @@ class SmartHouseAnalytics:
         This function can be seen as a simplified version of the DataFrame.describe()
         function that exists in Pandas:
         https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html?highlight=describe
+
+
+        1. hente ut liste med romnummer og namn på rom med tempsensor
+        2. hent ut min temp til kvart rom med tempsensor
+        3. hent ut max temp til kvart rom med tempsensor
+        4. hent ut avg temp til kvart rom med tempsensor
         """
-        return NotImplemented()
+        temp_in_rooms = dict
+        self.persistence.cursor.execute("SELECT rooms.name, min(measurements.value), MAX(measurements.value), AVG(measurements.value) "
+                                        "FROM measurements, devices, rooms "
+                                        "WHERE  devices.id = measurements.device "
+                                        "and devices.type = 'Temperatursensor' "
+                                        "and rooms.id = devices.room "
+                                        "GROUP BY measurements.device")
+
+        max_min_avg_dict = dict((item[0], (item[1], item[2], item[3])) for item in self.persistence.cursor.fetchall())
+
+        return max_min_avg_dict
 
     def get_hours_when_humidity_above_average(self, room: Room, day: date) -> List[int]:
         """
