@@ -24,6 +24,7 @@ def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
                     new_device = Sensor(device[5], device[2], device[3], device[4], device[2],None)
                 else:
                     new_device = Actuator(device[5],device[2],device[3],device[4],device[2],None) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
+
                 new_device.device_number = int(device[0])
                 new_device.new_db_entry()
                 new_room.add_device(new_device)
