@@ -114,9 +114,8 @@ class SmartHouseAnalytics:
         room = Room(float((room_vals[0])[0]), (room_vals[0])[1])
         # Assuming devices.device_id = measurements.device
         """
-
         #får feil når eg returnerar via repr?! men ikkje med .name. why?????!!!!
-        return room.name
+        return str(room)
 
     def get_sensor_readings_in_timespan(self, sensor: Device, from_ts: datetime, to_ts: datetime) -> List[float]:
         """
@@ -167,4 +166,17 @@ class SmartHouseAnalytics:
         the average recorded humidity in that room at that particular time.
         The result is a (possibly empty) list of number respresenting hours [0-23].
         """
+        self.persistence.cursor.execute(
+            "SELECT strftime('%H', measurements.time_stamp), measurements.value "
+            "FROM measurements, devices, rooms "
+            "WHERE measurements.device = devices.id "
+            "AND devices.type = 'Fuktighetssensor' "
+            "AND rooms.id = devices.room AND rooms.name = ? "
+            "AND measurements.time_stamp >= date(?) "
+            "AND measurements.time_stamp <  date(?, '+1 day')",
+            (room, day, day))
+        output_db = [(item[0], item[1]) for item in self.persistence.cursor.fetchall()]
+
+
+
         return NotImplemented()
