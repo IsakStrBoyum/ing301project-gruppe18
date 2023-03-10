@@ -3,7 +3,7 @@ from sqlite3 import Connection
 from devices import *
 from smarthouse import Room
 from typing import Optional, List, Dict, Tuple
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 class SmartHousePersistence:
@@ -121,6 +121,7 @@ class SmartHouseAnalytics:
         """
         Returns a list of sensor measurements (float values) for the given device in the given timespan.
         """
+
         self.persistence.cursor.execute("SELECT value FROM measurements "
                                         "WHERE device = ? "
                                         "AND DATETIME(time_stamp) >= DATETIME(?) "
@@ -128,6 +129,7 @@ class SmartHouseAnalytics:
         readings = [item[0] for item in self.persistence.cursor.fetchall()]
         #print(readings)
         return readings
+
 
     def describe_temperature_in_rooms(self) -> Dict[str, Tuple[float, float, float]]:
         """
@@ -147,6 +149,7 @@ class SmartHouseAnalytics:
         3. hent ut max temp til kvart rom med tempsensor
         4. hent ut avg temp til kvart rom med tempsensor
         """
+
         temp_in_rooms = dict
         self.persistence.cursor.execute("SELECT rooms.name, min(measurements.value), MAX(measurements.value), AVG(measurements.value) "
                                         "FROM measurements, devices, rooms "
@@ -159,13 +162,17 @@ class SmartHouseAnalytics:
 
         return max_min_avg_dict
 
+
     def get_hours_when_humidity_above_average(self, room: Room, day: date) -> List[int]:
+
         """
         This function determines during which hours of the given day
         there were more than three measurements in that hour having a humidity measurement that is above
         the average recorded humidity in that room at that particular time.
+        
         The result is a (possibly empty) list of number respresenting hours [0-23].
         """
+
         self.persistence.cursor.execute("SELECT strftime('%H', measurements.time_stamp) AS hours, "
                                         "COUNT(strftime('%H', measurements.time_stamp)) AS h_count "
                                         "FROM measurements, devices, rooms "
@@ -190,3 +197,4 @@ class SmartHouseAnalytics:
         output_db = [int(item[0]) for item in self.persistence.cursor.fetchall()]
 
         return output_db
+
