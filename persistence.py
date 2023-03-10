@@ -166,34 +166,27 @@ class SmartHouseAnalytics:
         the average recorded humidity in that room at that particular time.
         The result is a (possibly empty) list of number respresenting hours [0-23].
         """
-        self.persistence.cursor.execute("SELECT strftime('%H', measurements.time_stamp) AS hours, measurements.value AS meas "
+        self.persistence.cursor.execute("SELECT strftime('%H', measurements.time_stamp) AS hours, "
+                                        "COUNT(strftime('%H', measurements.time_stamp)) AS h_count "
                                         "FROM measurements, devices, rooms "
                                         "WHERE measurements.device = devices.id "
                                         "AND devices.type = 'Fuktighetssensor' "
                                         "AND rooms.id = devices.room "
                                         "AND rooms.name = ? "
                                         "AND measurements.time_stamp >= date(?) "
-                                        "AND measurements.time_stamp <  date(?, '+1 day')"
-                                        "AND meas > (SELECT AVG(measurements.value)"
+                                        "AND measurements.time_stamp <  date(?, '+1 day') "
+                                        "AND measurements.value > (SELECT AVG(measurements.value) "
                                         "FROM measurements, devices, rooms "
                                         "WHERE measurements.device = devices.id "
                                         "AND devices.type = 'Fuktighetssensor' "
                                         "AND rooms.id = devices.room "
                                         "AND rooms.name = ? "
                                         "AND measurements.time_stamp >= date(?) "
-                                        "AND measurements.time_stamp < date(?, '+1 day'))",
+                                        "AND measurements.time_stamp <  date(?, '+1 day')) "
+                                        "GROUP BY hours "
+                                        "HAVING h_count > 3",
                                         (room, day, day, room, day, day))
 
-        output_db = [(int(item[0]), float(item[1])) for item in self.persistence.cursor.fetchall()]
-        counter = 1
-        val_counter = 0
-        hour_list = []
-        
+        output_db = [int(item[0]) for item in self.persistence.cursor.fetchall()]
 
-
-        print(output_db)
-
-
-
-
-        return NotImplemented()
+        return output_db
