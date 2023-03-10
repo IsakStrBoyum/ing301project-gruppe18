@@ -111,31 +111,31 @@ class SmartHouseAnalytics:
         return NotImplemented
 
     def get_hours_when_humidity_above_average(self, room: Room, day: date) -> List[int]:
-        #room_name = room.name
-        print(room)
+
         self.persistence.cursor.execute("SELECT measurements.time_stamp, measurements.value FROM measurements, devices, rooms WHERE measurements.device = devices.id AND devices.type = 'Fuktighetssensor' AND rooms.id = devices.room AND rooms.name = ? AND measurements.time_stamp >= date(?) AND measurements.time_stamp <  date(?, '+1 day')",(room,day,day))
         output_db = [(item[0], item[1]) for item in self.persistence.cursor.fetchall()]
+
         avg_allday = 0
         for val in output_db:
             avg_allday += val[1]
 
         avg_allday = avg_allday/len(output_db)
-        print(avg_allday)
 
-        counter = 1
+        counter = int(datetime.fromisoformat(str(output_db[0][0])).strftime("%H"))
         val_counter = 0
         start_time = datetime.fromisoformat(str(output_db[0][0]))
-        print(start_time.strftime("%H"))
-        print(timedelta(hours=1))
         hour_list = []
+
         for val in output_db:
-            if int(datetime.fromisoformat(str(val[0])).strftime("%H")) < int(start_time.strftime("%H")) + counter:
+            if int(datetime.fromisoformat(str(val[0])).strftime("%H")) < 1 + counter:
                 if val[1] > avg_allday:
                     val_counter +=1
-                    if val_counter == 3:
+                    if val_counter == 4:
                         hour_list.append(counter)
             else:
                 val_counter = 0
+                if val[1] > avg_allday:
+                    val_counter = 1
                 counter +=1
 
 
@@ -146,5 +146,4 @@ class SmartHouseAnalytics:
         
         The result is a (possibly empty) list of number respresenting hours [0-23].
         """
-        print(hour_list)
         return hour_list

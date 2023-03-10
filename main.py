@@ -2,6 +2,7 @@ from smarthouse import SmartHouse
 from devices import *
 import codecs
 from persistence import SmartHousePersistence
+from pathlib import Path
 
 
 def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
@@ -19,9 +20,33 @@ def load_demo_house(persistence: SmartHousePersistence) -> SmartHouse:
         room_counter = room_counter+1
         for device in all_devices:
             if room_counter == int(device[1]):
-                new_device = Device(device[5],device[2],device[3],device[4],device[2]) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
+                if device[2] == 'Fuktighetssensor' or device[2] == 'Temperatursensor' or device[2] == 'Strømmåler' or device[2] == 'Luftkvalitetssensor':
+                    new_device = Sensor(device[5], device[2], device[3], device[4], device[2],None)
+                else:
+                    new_device = Actuator(device[5],device[2],device[3],device[4],device[2],None) # finne en god måte å hente ut om det er aktuator eller sensor.. mulig vi må endre på klassane
                 new_device.device_number = int(device[0])
+                new_device.new_db_entry()
                 new_room.add_device(new_device)
+
+    #update states from database
+
+    persistence.cursor.execute("SELECT device, state FROM states")
+    output_db = persistence.cursor.fetchall()
+    counter = 0
+    device_list = result.get_all_devices()
+    for line in output_db:
+        device_id = output_db[counter][0]
+        device_state = output_db[counter][1]
+        for device in device_list:
+            if device_id == device.device_number:
+                device.set_state(device_state)
+        counter += 1
+
+
+
+
+
+
 
 
     # read rooms, devices and their locations from the database
@@ -186,5 +211,8 @@ def main(smart_house: SmartHouse):
 
 
 if __name__ == '__main__':
-    house = build_demo_house()
+    #house = build_demo_house()
+    file_path = str(Path(__file__).parent.absolute()) + "/db.sqlite"
+    p = SmartHousePersistence(file_path)
+    house = load_demo_house(p)
     main(house)
