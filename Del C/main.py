@@ -22,12 +22,14 @@ smart_house = build_demo_house()
 
 # http://localhost:8000/welcome/index.html
 app.mount("/welcome", StaticFiles(directory="static"), name="static")
-#test
+
 
 # http://localhost:8000/
 @app.get("/")
 def root():
     return {"message": "Welcome to SmartHouse Cloud REST API - Powered by FastAPI"}
+
+
 
 
 if __name__ == '__main__':
