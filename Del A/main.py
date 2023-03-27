@@ -76,7 +76,7 @@ def build_demo_house() -> SmartHouse:
     list_of_units = []
 
     counter = 0
-    f = codecs.open('Data/List-of-units2', 'r', 'UTF-8')
+    f = codecs.open('../Data/List-of-units2', 'r', 'UTF-8')
     for line in f:
         list_of_units.append(line)
     f.close()
@@ -87,7 +87,7 @@ def build_demo_house() -> SmartHouse:
         
     list_of_measurement = []
     counter = 0
-    f = codecs.open('Data/Sensor-data', 'r', 'UTF-8')
+    f = codecs.open('../Data/Sensor-data', 'r', 'UTF-8')
     for line in f:
         list_of_measurement.append(line)
     f.close()
