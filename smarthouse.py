@@ -12,6 +12,13 @@ class Room:
         self.name = name
         self.devices_in_room = []
 
+    """
+    def __eq__(self, other):
+        if isinstance(other, Room):
+            return str(self.name) == str(other.name)
+        return False
+    """
+
     def __repr__(self):
         return str(self.name)
 

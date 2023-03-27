@@ -73,7 +73,7 @@ class PersistenceTest(unittest.TestCase):
 
     def test_analytics_medium(self):
         anal = SmartHouseAnalytics(PersistenceTest.p)
-        #self.assertEqual("Entrance", anal.get_coldest_room())
+        self.assertEqual("Entrance", anal.get_coldest_room())
 
         sensor12 = PersistenceTest.house.find_device_by_serial_no("d16d84de-79f1-4f9a")
         actuale = anal.get_sensor_readings_in_timespan(sensor12, datetime.fromisoformat("2023-02-14T13:35:00"),
