@@ -86,18 +86,30 @@ def read_device(did: int, response: Response):
 
 @app.get("/smarthouse/sensor/{did}/current/")  # get current sensor measurement for sensor did
 def read_sensor_value(did: int, response: Response):
-    return NotImplemented
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Sensor):
+        return device.get_current_value()
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
 
 
 @app.post("/smarthouse/sensor/{did}/current/", status_code=201)  # add measurement for sensor did
-def add_measurement(did: int, response: Response):
-    return NotImplemented
+def add_measurement(did: int, measurement: SensorMeasurement):
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Sensor) and measurement.value.isnumeric():
+        device.set_current_value(float(measurement.value))
+        return measurement
+    else:
+        return None
 
 
 @app.get(
     "/smarthouse/sensor/{did}/values?limit=n/")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
-def read_specific_meas(n: int, did: int, response: Response):
-    return NotImplemented
+def read_specific_meas(limit: int, did: int, response: Response):
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Sensor):
+        return device.get_current_values
 
 
 @app.delete("/smarthouse/sensor/{did}/oldest/")  # delete oldest measurements for sensor did
