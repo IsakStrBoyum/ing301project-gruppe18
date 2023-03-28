@@ -119,20 +119,43 @@ def read_specific_meas(did: int, response: Response, limit: int | None = None):
     return None
 
 
-@app.delete("/smarthouse/sensor/{did}/oldest/")  # delete oldest measurements for sensor did
+
+
+@app.delete("/smarthouse/sensor/{did}")  # delete oldest measurements for sensor did
 def delete_oldest_meas(did: int, response: Response):
-    return NotImplemented
+    device = smart_house.get_device(did)
+    if device and isinstance(device,Sensor):
+        if len(device.get_current_values()) > 0:
+            device.delete_oldest_value()
+        return device.get_current_values()
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
 
 
 @app.get("/smarthouse/actuator/{did}/current/")  # get current state for actuator did
 def read_current_state(did: int, response: Response):
-    return NotImplemented
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Actuator):
+        return {"state": device.get_current_state()}
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
+
 
 
 @app.put("/smarthouse/device/{did}")  # update current state for actuator did
-def update_actuator_state(did: int, state: ActuatorState):
-    return NotImplemented
+def update_actuator_state(did: int, actuator_state: ActuatorState, response: Response):
+    device = smart_house.get_device(did)
+
+    if device and isinstance(device, Actuator):
+        device.set_current_state(actuator_state.state)
+        return device
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
+
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8080)
