@@ -88,7 +88,7 @@ def read_device(did: int, response: Response):
 def read_sensor_value(did: int, response: Response):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
-        return device.get_current_value()
+        return {"value": device.get_current_value(), "unit": device.get_unit()}
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
     return None
@@ -97,7 +97,7 @@ def read_sensor_value(did: int, response: Response):
 @app.post("/smarthouse/sensor/{did}/current/", status_code=201)  # add measurement for sensor did
 def add_measurement(did: int, measurement: SensorMeasurement):
     device = smart_house.get_device(did)
-    if device and isinstance(device, Sensor) and measurement.value.isnumeric():
+    if device and isinstance(device, Sensor):
         device.set_current_value(float(measurement.value))
         return measurement
     else:
@@ -105,11 +105,18 @@ def add_measurement(did: int, measurement: SensorMeasurement):
 
 
 @app.get(
-    "/smarthouse/sensor/{did}/values?limit=n/")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
-def read_specific_meas(limit: int, did: int, response: Response):
+    "/smarthouse/sensor/{did}/values")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
+def read_specific_meas(did: int, response: Response, limit: int | None = None):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
-        return device.get_current_values
+        if limit is None:
+            return {"values": device.get_current_values()}
+        else:
+            return {"values": device.get_current_values()[0: limit]}
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+
+    return None
 
 
 @app.delete("/smarthouse/sensor/{did}/oldest/")  # delete oldest measurements for sensor did
@@ -123,7 +130,7 @@ def read_current_state(did: int, response: Response):
 
 
 @app.put("/smarthouse/device/{did}")  # update current state for actuator did
-def update_actuator_state(did: int, actuator: Actuator, response: Response):
+def update_actuator_state(did: int, state: ActuatorState):
     return NotImplemented
 
 
