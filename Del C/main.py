@@ -88,7 +88,7 @@ def read_device(did: int, response: Response):
 def read_sensor_value(did: int, response: Response):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
-        return device.get_current_value()
+        return {"value": device.get_current_value(), "unit": device.get_unit()}
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
     return None
@@ -106,8 +106,18 @@ def add_measurement(did: int, measurement: SensorMeasurement):
 
 @app.get(
     "/smarthouse/sensor/{did}/values")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
-def read_specific_meas(limit: int | None, did: int, response: Response):
-    return NotImplemented
+def read_specific_meas(did: int, response: Response, limit: int | None = None):
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Sensor):
+        if limit is None:
+            return {"values": device.get_current_values()}
+        else:
+            return {"values": device.get_current_values()[0: limit]}
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+
+    return None
+
 
 
 
@@ -144,7 +154,6 @@ def update_actuator_state(did: int, actuator_state: ActuatorState, response: Res
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
     return None
-
 
 
 

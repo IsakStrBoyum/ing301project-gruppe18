@@ -34,6 +34,9 @@ class Sensor(Device):
     def delete_oldest_value(self):
         pass
 
+    @abc.abstractmethod
+    def get_unit(self):
+        pass
 
 
 class TemperatureSensor(Sensor):
@@ -53,6 +56,8 @@ class TemperatureSensor(Sensor):
     def delete_oldest_value(self):
         self.temperature.pop()
 
+    def get_unit(self):
+        return self.unit
 
 class HumiditySensor(Sensor):
 
@@ -70,6 +75,9 @@ class HumiditySensor(Sensor):
 
     def delete_oldest_value(self):
         self.humidity.pop()
+
+    def get_unit(self):
+        return self.unit
 
 
 class SmartMeter(Sensor):
@@ -89,6 +97,9 @@ class SmartMeter(Sensor):
     def delete_oldest_value(self):
         self.energy_consumption.pop()
 
+    def get_unit(self):
+        return self.unit
+
 class AirQualitySensor(Sensor):
 
     air_quality: list[float] | None = list()
@@ -105,4 +116,7 @@ class AirQualitySensor(Sensor):
 
     def delete_oldest_value(self):
         self.air_quality.pop()
+
+    def get_unit(self):
+        return self.unit
         
