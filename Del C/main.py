@@ -97,7 +97,7 @@ def read_sensor_value(did: int, response: Response):
 @app.post("/smarthouse/sensor/{did}/current/", status_code=201)  # add measurement for sensor did
 def add_measurement(did: int, measurement: SensorMeasurement):
     device = smart_house.get_device(did)
-    if device and isinstance(device, Sensor) and measurement.value.isnumeric():
+    if device and isinstance(device, Sensor):
         device.set_current_value(float(measurement.value))
         return measurement
     else:
@@ -105,27 +105,48 @@ def add_measurement(did: int, measurement: SensorMeasurement):
 
 
 @app.get(
-    "/smarthouse/sensor/{did}/values?limit=n/")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
-def read_specific_meas(limit: int, did: int, response: Response):
-    device = smart_house.get_device(did)
-    if device and isinstance(device, Sensor):
-        return device.get_current_values
-
-
-@app.delete("/smarthouse/sensor/{did}/oldest/")  # delete oldest measurements for sensor did
-def delete_oldest_meas(did: int, response: Response):
+    "/smarthouse/sensor/{did}/values")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
+def read_specific_meas(limit: int | None, did: int, response: Response):
     return NotImplemented
+
+
+
+@app.delete("/smarthouse/sensor/{did}")  # delete oldest measurements for sensor did
+def delete_oldest_meas(did: int, response: Response):
+    device = smart_house.get_device(did)
+    if device and isinstance(device,Sensor):
+        if len(device.get_current_values()) > 0:
+            device.delete_oldest_value()
+        return device.get_current_values()
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
 
 
 @app.get("/smarthouse/actuator/{did}/current/")  # get current state for actuator did
 def read_current_state(did: int, response: Response):
-    return NotImplemented
+    device = smart_house.get_device(did)
+    if device and isinstance(device, Actuator):
+        return {"state": device.get_current_state()}
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
+
 
 
 @app.put("/smarthouse/device/{did}")  # update current state for actuator did
-def update_actuator_state(did: int, actuator: Actuator, response: Response):
-    return NotImplemented
+def update_actuator_state(did: int, actuator_state: ActuatorState, response: Response):
+    device = smart_house.get_device(did)
+
+    if device and isinstance(device, Actuator):
+        device.set_current_state(actuator_state.state)
+        return device
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return None
+
+
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8080)
