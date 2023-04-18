@@ -8,24 +8,23 @@ import common
 
 
 def lightbulb_cmd(state, did):
-
     new_state = state.get()
 
     logging.info(f"Dashboard: {new_state}")
 
-    #TODO START
+    # TODO START
     # send HTTP request with new actuator state to cloud service
-    if new_state == 'OFF':
+    if new_state == 'Off':
         new_state = 'False'
-    elif new_state == 'ON':
+    elif new_state == 'On':
         new_state = 'True'
-    r = requests.put(BASE_URL + f'device/{did}/', json={'state': new_state})
 
-    #TODO: END
+    r = requests.put(BASE_URL + f'actuator/{did}/current', json={'state': new_state})
+    print(r.json())
+    # TODO: END
 
 
 def init_lightbulb(container, did):
-
     lb_lf = ttk.LabelFrame(container, text=f'LightBulb [{did}]')
     lb_lf.grid(column=0, row=0, padx=20, pady=20, sticky=tk.W)
 

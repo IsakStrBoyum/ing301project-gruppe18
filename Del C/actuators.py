@@ -34,8 +34,10 @@ class SimpleOnOffActuator(Actuator):
         return self.is_active
 
     def set_current_state(self, is_active: str):
-        self.is_active = bool(eval(is_active))  # !!!!!!!!!!!!!!!! bool("False") = TRUE!!!!!!!!!!!!!! wtf
-
+        if is_active == "True":
+            self.is_active = True
+        else:
+            self.is_active = False
 
 class HeatControlActuator(Actuator):
 
