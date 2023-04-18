@@ -33,7 +33,8 @@ class Sensor:
             #print(self.measurement.to_json())
             r = requests.post(common.BASE_URL + f'sensor/{self.did}/current/', json={'value': self.measurement.value})
             time.sleep(common.TEMPERATURE_SENSOR_CLIENT_SLEEP_TIME)
-
+        else:
+            logging.info(f"Sensor Client {self.did} starting")
 
     def run(self):
 

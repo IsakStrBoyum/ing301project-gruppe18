@@ -20,7 +20,6 @@ def lightbulb_cmd(state, did):
         new_state = 'True'
 
     r = requests.put(BASE_URL + f'actuator/{did}/current', json={'state': new_state})
-    print(r.json())
     # TODO: END
 
 
