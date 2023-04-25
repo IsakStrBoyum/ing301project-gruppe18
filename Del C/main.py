@@ -25,17 +25,17 @@ app.mount("/welcome", StaticFiles(directory="static"), name="static")
 
 # http://localhost:8000/
 @app.get("/")  # Information on the smart house
-def root():
+async def root():
     return {"message": "Welcome to SmartHouse Cloud REST API - Powered by FastAPI"}
 
 
 @app.get("/smarthouse/floor/")  # information on all floors
-def read_floors():
+async def read_floors():
     return smart_house.floors
 
 
 @app.get("/smarthouse/floor/{fid}/")  # information about a floor given by fid
-def read_floor(fid: int, response: Response):
+async def read_floor(fid: int, response: Response):
     floor = smart_house.get_floor(fid)
     if floor:
         return floor
@@ -46,7 +46,7 @@ def read_floor(fid: int, response: Response):
 
 
 @app.get("/smarthouse/floor/{fid}/room/")  # information about all rooms on a given floor fid
-def read_rooms(fid: int, response: Response):
+async def read_rooms(fid: int, response: Response):
     floor = smart_house.get_floor(fid)
     if floor:
         return floor.rooms
@@ -57,7 +57,7 @@ def read_rooms(fid: int, response: Response):
 
 
 @app.get("/smarthouse/floor/{fid}/room/{rid}/")  # information about a specific room rid on a given floor fid
-def read_room(rid: int, fid: int, response: Response):
+async def read_room(rid: int, fid: int, response: Response):
     floor = smart_house.get_floor(fid)
     if floor:
         room = floor.get_room(rid)
@@ -70,12 +70,12 @@ def read_room(rid: int, fid: int, response: Response):
 
 
 @app.get("/smarthouse/device/")  # information on all devices
-def read_devices():
+async def read_devices():
     return smart_house.get_device_list()
 
 
 @app.get("/smarthouse/device/{did}/")  # information for a given device did
-def read_device(did: int, response: Response):
+async def read_device(did: int, response: Response):
     device = smart_house.get_device(did)
     if device:
         return device
@@ -85,7 +85,7 @@ def read_device(did: int, response: Response):
 
 
 @app.get("/smarthouse/sensor/{did}/current/")  # get current sensor measurement for sensor did
-def read_sensor_value(did: int, response: Response):
+async def read_sensor_value(did: int, response: Response):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
         return {"value": device.get_current_value(), "unit": device.get_unit()}
@@ -95,7 +95,7 @@ def read_sensor_value(did: int, response: Response):
 
 
 @app.post("/smarthouse/sensor/{did}/current/", status_code=201)  # add measurement for sensor did
-def add_measurement(did: int, measurement: SensorMeasurement):
+async def add_measurement(did: int, measurement: SensorMeasurement):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
         device.set_current_value(float(measurement.value))
@@ -106,7 +106,7 @@ def add_measurement(did: int, measurement: SensorMeasurement):
 
 @app.get(
     "/smarthouse/sensor/{did}/values")  # get n latest available measurements for sensor did. If query parameter not present, then all available measurements.
-def read_specific_meas(did: int, response: Response, limit: int | None = None):
+async def read_specific_meas(did: int, response: Response, limit: int | None = None):
     device = smart_house.get_device(did)
     if device and isinstance(device, Sensor):
         if limit is None:
@@ -122,7 +122,7 @@ def read_specific_meas(did: int, response: Response, limit: int | None = None):
 
 
 @app.delete("/smarthouse/sensor/{did}")  # delete oldest measurements for sensor did
-def delete_oldest_meas(did: int, response: Response):
+async def delete_oldest_meas(did: int, response: Response):
     device = smart_house.get_device(did)
     if device and isinstance(device,Sensor):
         if len(device.get_current_values()) > 0:
@@ -134,7 +134,7 @@ def delete_oldest_meas(did: int, response: Response):
 
 
 @app.get("/smarthouse/actuator/{did}/current/")  # get current state for actuator did
-def read_current_state(did: int, response: Response):
+async def read_current_state(did: int, response: Response):
     device = smart_house.get_device(did)
     if device and isinstance(device, Actuator):
         return {"state": device.get_current_state()}
@@ -144,18 +144,18 @@ def read_current_state(did: int, response: Response):
 
 
 
-@app.put("/smarthouse/device/{did}")  # update current state for actuator did
-def update_actuator_state(did: int, actuator_state: ActuatorState, response: Response):
+@app.put("/smarthouse/actuator/{did}/current")  # update current state for actuator did
+async def update_actuator_state(did: int, state: ActuatorState, response: Response):
     device = smart_house.get_device(did)
 
-    if device and isinstance(device, Actuator):
-        device.set_current_state(actuator_state.state)
-        return device
-    else:
-        response.status_code = status.HTTP_404_NOT_FOUND
-    return None
+    device = smart_house.read_device(did)
+
+    if device and device.is_actuator():
+        device.set_current_state(state.state)
+
+    return device
 
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=8080)
+    uvicorn.run(app, host="127.0.0.1", port=8081)

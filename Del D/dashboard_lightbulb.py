@@ -2,26 +2,28 @@ import tkinter as tk
 from tkinter import ttk
 import logging
 import requests
-
+from common import BASE_URL
 from messaging import ActuatorState
 import common
 
 
 def lightbulb_cmd(state, did):
-
     new_state = state.get()
 
     logging.info(f"Dashboard: {new_state}")
 
     # TODO START
     # send HTTP request with new actuator state to cloud service
+    if new_state == 'Off':
+        new_state = 'False'
+    elif new_state == 'On':
+        new_state = 'True'
 
-
+    r = requests.put(BASE_URL + f'actuator/{did}/current', json={'state': new_state})
     # TODO: END
 
 
 def init_lightbulb(container, did):
-
     lb_lf = ttk.LabelFrame(container, text=f'LightBulb [{did}]')
     lb_lf.grid(column=0, row=0, padx=20, pady=20, sticky=tk.W)
 

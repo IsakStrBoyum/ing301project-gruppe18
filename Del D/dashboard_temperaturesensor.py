@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-
+from common import BASE_URL
 import logging
 import requests
 
@@ -14,9 +14,10 @@ def refresh_btn_cmd(temp_widget, did):
 
     # TODO START
     # send request to cloud service to obtain current temperature
+    r = requests.get(BASE_URL + f'sensor/{did}/current/')
+    r_js = r.json()
+    sensor_measurement = SensorMeasurement.json_decoder(r_js)
 
-    # replace statement below with measurement from response
-    sensor_measurement = SensorMeasurement(init_value="-273.15")
 
     # TODO END
 

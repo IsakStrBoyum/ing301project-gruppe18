@@ -2,7 +2,7 @@ LIGHTBULB_DID = 1
 TEMPERATURE_SENSOR_DID = 8
 
 # base URL for the cloud service - can be used to avoid dependency on deployment
-BASE_URL = "http://localhost:8000/smarthouse/"
+BASE_URL = "http://localhost:8081/smarthouse/"
 
 LIGHTBULB_SIMULATOR_SLEEP_TIME = 1
 LIGHTBULB_CLIENT_SLEEP_TIME = 4
